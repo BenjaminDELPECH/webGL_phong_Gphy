@@ -10,7 +10,7 @@ var normalBuffer;
 var mvMatrix = mat4.create();
 var pMatrix = mat4.create();
 var objMatrix = mat4.create();
-var worldmatrix=mat4.create();
+
 var SourceLumineuseMatrix=vec3.create();
 
 
@@ -134,16 +134,6 @@ function generate_sphere(sphere_center,nbTh){
 				colors.push(couleur1,couleur1,couleur1,1.0);
 				colors.push(couleur1,couleur1,couleur1,1.0);
 
-				//coordonnees milieu triangle
-				xG=(x1+x3+x4)/3;
-				yG=(y1+y3+y4)/3;
-				zG=(z1+z3+z4)/3;
-				
-				//milieu triangle-centre de la sphere
-				//on multiplie pour avoir une droite qui part du centre de la sphere
-				//et depasse legerement la surface pour qu'on puisse la visualiser
-				petitesNormales.push(xG,yG,zG);
-				petitesNormales.push((xG-xSph_cent)*1.05,(yG-ySph_cent)*1.05,(zG-zSph_cent)*1.05);
 				
 			}
 
@@ -160,12 +150,7 @@ function generate_sphere(sphere_center,nbTh){
 				colors.push(couleur1,couleur1,couleur1,1.0);
 				colors.push(couleur1,couleur1,couleur1,1.0);
 
-				xG=(x1+x4+x2)/3;
-				yG=(y1+y4+y2)/3;
-				zG=(z2+z4+z2)/3;
 				
-				petitesNormales.push(xG,yG,zG);
-				petitesNormales.push((xG-xSph_cent)*1.01,(yG-ySph_cent)*1.02,(zG-zSph_cent)*1.02);
 
 
 			}
@@ -183,13 +168,26 @@ function initBuffers() {
 	colors=[];
 	vertexNormales=[];
 	petitesNormales=[];
+	vertexPlan=[];
+	vertexPlan.push(-2,0,0);vertexPlan.push(2,0,0);
+	
+	vertexPlan.push(0,-2,0);vertexPlan.push(0,2,0);
+	
+	vertexPlan.push(0,0,-2);vertexPlan.push(0,0,2);
+	
 	
 	//coordonnées du centre de la sphère
 	sphere_center1={x:0.0,y:0.0,z:0.0};
+	// sphere_center2={x:1.0,y:0.0,z:0.0};
+	// sphere_center3={x:0.0,y:1.0,z:0.0};
+	// sphere_center4={x:0.0,y:0.0,z:1.0};
 	
 	//fonction pour generer une sphere à partir d'un centre et
 	//d'un nombre de theta
 	generate_sphere(sphere_center1,35);
+	// generate_sphere(sphere_center2,35);
+	// generate_sphere(sphere_center3,35);
+	// generate_sphere(sphere_center4,35);
 	
 	
 	//creation des buffers et envoit des tableaux dans les buffers
@@ -207,12 +205,7 @@ function initBuffers() {
 	normalBuffer.itemSize = 3;
 	normalBuffer.numItems = vertexNormales.length/3;
 
-	//envoit des petites normales au buffer qu'on pourra voir s'afficher
-	vertexBuffer2 = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer2);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(petitesNormales), gl.STATIC_DRAW);
-	vertexBuffer2.itemSize = 3;
-	vertexBuffer2.numItems = petitesNormales.length/3;
+
 
 	//envoit des couleurs au buffer
 	colorBuffer = gl.createBuffer();
@@ -220,6 +213,14 @@ function initBuffers() {
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 	colorBuffer.itemSize = 4;
 	colorBuffer.numItems = colors.length/4;
+
+
+	//envoit des couleurs au buffer
+	planBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, planBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexPlan), gl.STATIC_DRAW);
+	planBuffer.itemSize = 3;
+	planBuffer.numItems = vertexPlan.length/3;
 
 
 	
@@ -310,7 +311,7 @@ function setMatrixUniforms() {
 	if(shaderProgram != null) {
 		gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
 		gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
-		gl.uniformMatrix4fv(shaderProgram.worldmatrix, false, worldmatrix);
+		
 		
 		gl.uniform3f(shaderProgram.DirectionLumiere,   2.0, 2.0, 2.0);
 		
@@ -327,7 +328,7 @@ function setMatrixUniforms() {
 
 // =====================================================
 function drawScene() {
-	var z_camera=-6.0;
+	var z_camera=-10.0;
 	gl.clear(gl.COLOR_BUFFER_BIT);
 
 	if(shaderProgram != null) {
@@ -352,7 +353,7 @@ function drawScene() {
 		mat4.identity(mvMatrix);
 		mat4.translate(mvMatrix, [0.0, 0.0, z_camera]);
 		mat4.multiply(mvMatrix, objMatrix);
-		worldmatrix=mat4.multiply(mvMatrix, objMatrix);
+		
 
 		setMatrixUniforms();
 
@@ -362,24 +363,27 @@ function drawScene() {
 
 
 
-
-		//Envoit des petites normales à la spheres, au shader 
-		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer2);
+		//Envoit des normales au shader, important pour les jeux de lumières
+		gl.bindBuffer(gl.ARRAY_BUFFER, planBuffer);
 		gl.vertexAttribPointer(
-		shaderProgram.vertexPositionAttribute,
-		vertexBuffer2.itemSize, gl.FLOAT, false, 0, 0);
+   		shaderProgram.aVertexPosition, 3, gl.FLOAT, false, 0, 0);
 
 		mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
 		mat4.identity(mvMatrix);
 		mat4.translate(mvMatrix, [0.0, 0.0, z_camera]);
 		mat4.multiply(mvMatrix, objMatrix);
-		worldmatrix=mat4.multiply(mvMatrix, objMatrix);
+		
 
 		setMatrixUniforms();
 
-		//dessine les petites normales
-		gl.drawArrays(gl.LINES, 0, vertexBuffer2.numItems);
+		//dessine en prenant compte des triangles de la sphere
+		gl.drawArrays(gl.LINES, 0,  planBuffer.numItems);
 
+
+
+
+
+	
 
 
 
