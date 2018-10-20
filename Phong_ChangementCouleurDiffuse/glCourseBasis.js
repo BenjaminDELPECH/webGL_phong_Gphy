@@ -194,9 +194,7 @@ function initBuffers() {
 	//fonction pour generer une sphere à partir d'un centre et
 	//d'un nombre de theta
 	generate_sphere(sphere_center1,140);
-	
-	r=Math.sqrt(Math.pow((vertices[0]-sphere_center1.x),2)+vertices[0]-sphere_center1.x+vertices[0]-sphere_center1.x);
-	alert(r);
+
 	
 	//creation des buffers et envoit des tableaux dans les buffers
 	//+definition de la taille et du nombre d'item contenu dans les tableaux.
@@ -328,7 +326,7 @@ function setMatrixUniforms() {
 		gl.uniform3f(shaderProgram.DirectionLumiere,   2.0, 2.0, 2.0);
 		
 		gl.uniform4fv(shaderProgram.uLightAmbient, [0.005,0.005,0.005,1.0]);
-    	gl.uniform4fv(shaderProgram.uLightDiffuse,  [1.0,1.0,1.0,1.0]); 
+    	gl.uniform4fv(shaderProgram.uLightDiffuse,  [0.12,1.0,0.66,1.0]); 
     	gl.uniform4fv(shaderProgram.uLightSpecular,  [1.0,1.0,1.0,1.0]);
     	gl.uniform4fv(shaderProgram.uMaterialAmbient, [0.0,1.0,1.0,1.0]); 
     	gl.uniform4fv(shaderProgram.uMaterialDiffuse, [1.0,1.0,1.0,1.0]);
