@@ -56,8 +56,8 @@ void main(void){
       vec3 E = normalize(vCamera);
       vec3 R = reflect(S, -N);
      
-      
-      specular=((1.0/pi*pow(r,2.0)))*0.10+((uShininess+2.0)/2.0*pi*pow(r,2.0))*0.01*pow( max(dot(R, E), 0.0), uShininess);
+  
+      float specular=((1.0/pi*pow(r,2.0)))*0.10+((uShininess+2.0)/2.0*pi*pow(r,2.0))*0.01*pow( max(dot(R, E), 0.0), uShininess);
       Is = uLightSpecular * uMaterialSpecular * specular; //Indice de specularite
      }
 
