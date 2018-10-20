@@ -360,7 +360,7 @@ function setMatrixUniforms() {
     	gl.uniform4fv(shaderProgram.uMaterialAmbient, [1.0,1.0,1.0,1.0]); 
     	gl.uniform4fv(shaderProgram.uMaterialDiffuse, [1.0,1.0,1.0,1.0]);
     	gl.uniform4fv(shaderProgram.uMaterialSpecular,[1.0,1.0,1.0,1.0]);
-    	gl.uniform1f(shaderProgram.uShininess, 75.0);
+    	gl.uniform1f(shaderProgram.uShininess, 25.0);
 		
 	}
 }

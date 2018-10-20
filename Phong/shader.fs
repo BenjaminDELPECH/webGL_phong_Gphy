@@ -35,7 +35,7 @@ void main(void){
 
   	
   //dot permet de faire le produit entre mes normales et la //source lumineuse. Retourne un float entre 0 et 1 correspondant à l'angle entre ma normale et la source lumineuse
-	float light = dot(N, -S);
+	float light = 3.0*(1.0/3.14) * dot(-N, S);
 
 	
 	//Ambiance
