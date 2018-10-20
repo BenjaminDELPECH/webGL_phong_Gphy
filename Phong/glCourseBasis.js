@@ -195,8 +195,9 @@ function initBuffers() {
 	//d'un nombre de theta
 	generate_sphere(sphere_center1,140);
 	
-	r=Math.sqrt(Math.pow((vertices[0]-sphere_center1.x),2)+vertices[0]-sphere_center1.x+vertices[0]-sphere_center1.x);
-	alert(r);
+	//calcul du
+	r=Math.sqrt(Math.pow((vertices[0]-sphere_center1.x),2)+vertices[1]-sphere_center1.x+vertices[2]-sphere_center1.x);
+
 	
 	//creation des buffers et envoit des tableaux dans les buffers
 	//+definition de la taille et du nombre d'item contenu dans les tableaux.
@@ -309,7 +310,8 @@ function initShaders(vShaderTxt,fShaderTxt) {
     shaderProgram.uLightDiffuse      = gl.getUniformLocation(shaderProgram, "uLightDiffuse");
     shaderProgram.uLightSpecular     = gl.getUniformLocation(shaderProgram, "uLightSpecular");
 	shaderProgram.uShininess         = gl.getUniformLocation(shaderProgram, "uShininess");
-    
+	shaderProgram.pi         = gl.getUniformLocation(shaderProgram, "pi");
+	shaderProgram.r        = gl.getUniformLocation(shaderProgram, "r");
 }
 
 
@@ -333,7 +335,9 @@ function setMatrixUniforms() {
     	gl.uniform4fv(shaderProgram.uMaterialAmbient, [0.0,1.0,1.0,1.0]); 
     	gl.uniform4fv(shaderProgram.uMaterialDiffuse, [1.0,1.0,1.0,1.0]);
     	gl.uniform4fv(shaderProgram.uMaterialSpecular,[1.0,1.0,1.0,1.0]);
-    	gl.uniform1f(shaderProgram.uShininess, 25.0);
+		gl.uniform1f(shaderProgram.uShininess, 150.0);
+		gl.uniform1f(shaderProgram.pi, Math.PI);
+		gl.uniform1f(shaderProgram.r, r);
 		
 	}
 }

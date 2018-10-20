@@ -30,7 +30,7 @@ void main(void) {
     vCamera = -vec3(vertex.xyz);
     
     vec3 prePosLumiere=vec3(0.0,0.0,0.0);
-    vLumiere= uMVMatrix * uPMatrix*vec4(-prePosLumiere,1.0);
+    vLumiere= uMVMatrix * uPMatrix * vec4(-prePosLumiere,1.0);
 	
 	vColor=aVertexColor;
     vNormal = a_normal;

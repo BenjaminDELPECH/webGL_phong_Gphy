@@ -49,6 +49,7 @@ void main(void){
 
 	if(light > 0.0) //Seulement si la lumiere est positive
     { 
+      r=4.0;
       Id = uLightDiffuse * uMaterialDiffuse * light; //Indice de diffusion
       vec3 E = normalize(vCamera);
       vec3 R = reflect(S, -N);
