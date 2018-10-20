@@ -6,7 +6,7 @@ varying vec3 v_normal;
 varying vec3 vEyeVec;
 uniform int test;
 
-uniform vec3 SourceLumineuse;
+
 uniform vec4 u_color;
 
 uniform float uShininess;        //shininess

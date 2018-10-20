@@ -1,8 +1,8 @@
 precision mediump float;
 
-varying vec3 vLumiere;
+varying vec4 vLumiere;
 varying vec4 vColor;
-varying vec3 v_normal;
+varying vec3 vNormal;
 varying vec3 vCamera;
 uniform int test;
 
@@ -28,8 +28,8 @@ uniform vec4 uMaterialSpecular;  //object specular property
 
 void main(void){
 	
-  vec3 S= normalize(-DirectionLumiere);
-  vec3 N =normalize(v_normal);
+  vec3 S= normalize(vLumiere.xyz);
+  vec3 N =normalize(vNormal);
 
   	
 
@@ -63,7 +63,9 @@ void main(void){
   finalColor.a = 1.0;
   
   gl_FragColor = finalColor;
-
+  gl_FragColor.r =  finalColor.r;
+   gl_FragColor.g =  finalColor.g;
+    gl_FragColor.b =  finalColor.b;
 }
 
 
