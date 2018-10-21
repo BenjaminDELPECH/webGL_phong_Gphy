@@ -194,7 +194,7 @@ function initBuffers() {
 
 	//fonction pour generer une sphere à partir d'un centre et
 	//d'un nombre de theta
-	generate_sphere(sphere_center1,10);
+	generate_sphere(sphere_center1,100);
 	
 	
 	//calcul du
@@ -346,7 +346,7 @@ function setMatrixUniforms() {
 
 // =====================================================
 function drawScene() {
-	var z_camera=-5.0;
+	var z_camera=-4.0;
 	gl.clear(gl.COLOR_BUFFER_BIT);
 
 	if(shaderProgram != null) {
