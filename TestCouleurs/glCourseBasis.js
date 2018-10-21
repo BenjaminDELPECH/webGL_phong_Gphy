@@ -140,9 +140,9 @@ function generate_sphere(sphere_center,nbTh){
 
 
 				//couleurs
-				colors.push(testXcouleur,testYcouleur,testZcouleur,1.0);
-				colors.push(testXcouleur,testYcouleur,testZcouleur,1.0);
-				colors.push(testXcouleur,testYcouleur,testZcouleur,1.0);
+				colors.push(x1-xSph_cent,y1-ySph_cent,z1-zSph_cent,1.0);
+				colors.push(x3-xSph_cent,y3-ySph_cent,z3-zSph_cent,1.0);
+				colors.push(x4-xSph_cent,y4-ySph_cent,z4-zSph_cent,1.0);
 
 				
 				
@@ -171,9 +171,9 @@ function generate_sphere(sphere_center,nbTh){
 				testZcouleur=((zG)+1)/2;
 
 				//couleurs
-				colors.push(testXcouleur,testYcouleur,testZcouleur,1.0);
-				colors.push(testXcouleur,testYcouleur,testZcouleur,1.0);
-				colors.push(testXcouleur,testYcouleur,testZcouleur,1.0);
+				colors.push(x1-xSph_cent,y1-ySph_cent,z1-zSph_cent,1.0);
+				colors.push(x4-xSph_cent,y4-ySph_cent,z4-zSph_cent,1.0);
+				colors.push(x2-xSph_cent,y2-ySph_cent,z2-zSph_cent,1.0);
 
 				xG=(x1+x4+x2)/3;
 				yG=(y1+y4+y2)/3;

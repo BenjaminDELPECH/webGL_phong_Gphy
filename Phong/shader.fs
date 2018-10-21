@@ -37,7 +37,7 @@ void main(void){
 
   	
   //dot permet de faire le produit entre mes normales et la //source lumineuse. Retourne un float entre 0 et 1 correspondant à l'angle entre ma normale et la source lumineuse
-	float light = 29.0*(0.10/pi) * dot(-N, S);
+	float light = 28.0*(0.10/pi) * dot(-N, S);
 
 	
 	//Ambiance
@@ -54,10 +54,10 @@ void main(void){
 
       Id = uLightDiffuse * uMaterialDiffuse * light; //Indice de diffusion
       vec3 E = normalize(vCamera);
-      vec3 R = reflect(S, -N);
+      vec3 R = reflect(S, N);
      
   
-      float specular=((1.0/pi*pow(r,2.0)))*0.10+((uShininess+2.0)/2.0*pi*pow(r,2.0))*0.01*pow( max(dot(R, E), 0.0), uShininess);
+      float specular=((1.0/pi*pow(r,2.0)))*0.10+((uShininess+2.0)/2.0*pi*pow(r,2.0))*0.10*pow( max(dot(R, E), 0.0), uShininess);
       Is = uLightSpecular * uMaterialSpecular * specular; //Indice de specularite
      }
 
@@ -68,9 +68,9 @@ void main(void){
   finalColor.a = 1.0;
   
   gl_FragColor = finalColor;
-  gl_FragColor.r =  finalColor.r;
-   gl_FragColor.g =  finalColor.g;
-    gl_FragColor.b =  finalColor.b;
+  gl_FragColor.r =  finalColor.r*vColor.r;
+   gl_FragColor.g =  finalColor.g*vColor.g;
+    gl_FragColor.b =  finalColor.b*vColor.b;
 }
 
 

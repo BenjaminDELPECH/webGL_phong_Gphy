@@ -63,10 +63,11 @@ void main(void){
   finalColor.a = 1.0;
   
 
-  gl_FragColor.a = 1.0;
-  gl_FragColor.r =  vColor.r;
-   gl_FragColor.g =  vColor.g;
-    gl_FragColor.b =  vColor.b;
+  gl_FragColor=finalColor;
+  gl_FragColor.r=finalColor.r*vColor.r;
+   gl_FragColor.g=finalColor.g*vColor.g;
+    gl_FragColor.b=finalColor.b*vColor.b;
+
 }
 
 

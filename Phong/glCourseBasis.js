@@ -136,11 +136,12 @@ function generate_sphere(sphere_center,nbTh){
 				vertexNormales.push(x3-xSph_cent,y3-ySph_cent,z3-zSph_cent);
 				vertexNormales.push(x4-xSph_cent,y4-ySph_cent,z4-zSph_cent);
 
-	
-				//couleurs
-				colors.push(1.0,1.0,1.0,1.0);
-				colors.push(1.0,1.0,1.0,1.0);
-				colors.push(1.0,1.0,1.0,1.0);
+				
+				
+					//couleurs
+				colors.push((x1-xSph_cent+1)/2,(y1-ySph_cent+1)/2,(z1-ySph_cent+1)/2,1.0);
+				colors.push((x3-xSph_cent+1)/2,(y3-ySph_cent+1)/2,(z3-ySph_cent+1)/2,1.0);
+				colors.push((x4-xSph_cent+1)/2,(y4-ySph_cent+1)/2,(z4-ySph_cent+1)/2,1.0);
 
 				
 				
@@ -159,12 +160,12 @@ function generate_sphere(sphere_center,nbTh){
 				vertexNormales.push(x4-xSph_cent,y4-ySph_cent,z4-zSph_cent);
 				vertexNormales.push(x2-xSph_cent,y2-ySph_cent,z2-zSph_cent);
 
-
+			
 			
 				//couleurs
-				colors.push(1.0,1.0,1.0,1.0);
-				colors.push(1.0,1.0,1.0,1.0);
-				colors.push(1.0,1.0,1.0,1.0);
+				colors.push((x1-xSph_cent+1)/2,(y1-ySph_cent+1)/2,(z1-ySph_cent+1)/2,1.0);
+				colors.push((x4-xSph_cent+1)/2,(y4-ySph_cent+1)/2,(z4-ySph_cent+1)/2,1.0);
+				colors.push((x2-xSph_cent+1)/2,(y2-ySph_cent+1)/2,(z2-ySph_cent+1)/2,1.0);
 
 				
 				
@@ -193,7 +194,8 @@ function initBuffers() {
 
 	//fonction pour generer une sphere à partir d'un centre et
 	//d'un nombre de theta
-	generate_sphere(sphere_center1,140);
+	generate_sphere(sphere_center1,10);
+	
 	
 	//calcul du
 	r=Math.sqrt(Math.pow((vertices[0]-sphere_center1.x),2)+vertices[1]-sphere_center1.x+vertices[2]-sphere_center1.x);
