@@ -69,7 +69,6 @@ function handleMouseMove(event) {
 	
 	mat4.rotate(objMatrix, rotX, [1, 0, 0]);
 
-	
 	lastMouseX = newX
 	lastMouseY = newY;
 }

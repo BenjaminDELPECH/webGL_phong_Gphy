@@ -10,19 +10,9 @@ var normalBuffer;
 var mvMatrix = mat4.create();
 var pMatrix = mat4.create();
 var objMatrix = mat4.create();
-var worldmatrix=mat4.create();
-var SourceLumineuseMatrix=vec3.create();
-
 var mvMatrix2 = mat4.create();
 var pMatrix2 = mat4.create();
-
-
 mat4.identity(objMatrix);
-
-var r= 0.23;
-
-
-
 
 
 // =====================================================
@@ -42,8 +32,8 @@ function webGLStart() {
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	gl.enable(gl.DEPTH_TEST);
 
-//	drawScene();
-tick();
+	//	drawScene();
+	tick();
 }
 
 // =====================================================
@@ -126,71 +116,36 @@ function generate_sphere(sphere_center,nbTh){
 
 			
 			if(i < nbTh-1) {
+				//Coordonnées des points à la suface de la sphère
 				vertices.push(x1,y1,z1);
 				vertices.push(x3,y3,z3);
 				vertices.push(x4,y4,z4);
-				
 				
 				//Point sur la surface de la spere-centre de la sphere
 				vertexNormales.push(x1-xSph_cent,y1-ySph_cent,z1-zSph_cent);
 				vertexNormales.push(x3-xSph_cent,y3-ySph_cent,z3-zSph_cent);
 				vertexNormales.push(x4-xSph_cent,y4-ySph_cent,z4-zSph_cent);
 
-				//coordonnees milieu triangle
-				xG=(x1+x3+x4)/3;
-				yG=(y1+y3+y4)/3;
-				zG=(z1+z3+z4)/3;
-
-				testXcouleur=((xG)+1)/2;
-				testYcouleur=((yG)+1)/2;
-				testZcouleur=((zG)+1)/2;
-
-
-
 				//couleurs
-				colors.push(testXcouleur,testYcouleur,testZcouleur,1.0);
-				colors.push(testXcouleur,testYcouleur,testZcouleur,1.0);
-				colors.push(testXcouleur,testYcouleur,testZcouleur,1.0);
-
-				
-				
-				//milieu triangle-centre de la sphere
-				//on multiplie pour avoir une droite qui part du centre de la sphere
-				//et depasse legerement la surface pour qu'on puisse la visualiser
-				petitesNormales.push(xG,yG,zG);
-				petitesNormales.push((xG-xSph_cent)*1.05,(yG-ySph_cent)*1.05,(zG-zSph_cent)*1.05);
-				
+				colors.push((x1-xSph_cent+1)/2,(y1-ySph_cent+1)/2,(z1-ySph_cent+1)/2,1.0);
+				colors.push((x3-xSph_cent+1)/2,(y3-ySph_cent+1)/2,(z3-ySph_cent+1)/2,1.0);
+				colors.push((x4-xSph_cent+1)/2,(y4-ySph_cent+1)/2,(z4-ySph_cent+1)/2,1.0);
 			}
-
 			if(i != 0) {
+				//Coordonnées des points à la suface de la sphère
 				vertices.push(x1,y1,z1);
 				vertices.push(x4,y4,z4);
 				vertices.push(x2,y2,z2);
 
-				
-
+				//Normales
 				vertexNormales.push(x1-xSph_cent,y1-ySph_cent,z1-zSph_cent);
 				vertexNormales.push(x4-xSph_cent,y4-ySph_cent,z4-zSph_cent);
 				vertexNormales.push(x2-xSph_cent,y2-ySph_cent,z2-zSph_cent);
 
-
-				testXcouleur=((xG)+1)/2;
-				testYcouleur=((yG)+1)/2;
-				testZcouleur=((zG)+1)/2;
-
 				//couleurs
-				colors.push(testXcouleur,testYcouleur,testZcouleur,1.0);
-				colors.push(testXcouleur,testYcouleur,testZcouleur,1.0);
-				colors.push(testXcouleur,testYcouleur,testZcouleur,1.0);
-
-				xG=(x1+x4+x2)/3;
-				yG=(y1+y4+y2)/3;
-				zG=(z2+z4+z2)/3;
-				
-				petitesNormales.push(xG,yG,zG);
-				petitesNormales.push((xG-xSph_cent)*1.02,(yG-ySph_cent)*1.02,(zG-zSph_cent)*1.02);
-
-
+				colors.push((x1-xSph_cent+1)/2,(y1-ySph_cent+1)/2,(z1-ySph_cent+1)/2,1.0);
+				colors.push((x4-xSph_cent+1)/2,(y4-ySph_cent+1)/2,(z4-ySph_cent+1)/2,1.0);
+				colors.push((x2-xSph_cent+1)/2,(y2-ySph_cent+1)/2,(z2-ySph_cent+1)/2,1.0);
 			}
 
 		}
@@ -206,15 +161,16 @@ function initBuffers() {
 	colors=[];
 	vertexNormales=[];
 	petitesNormales=[];
-	
+
 	//coordonnées du centre de la sphère
 	sphere_center1={x:0.0,y:0.0,z:0.0};
+
+	//fonction pour generer une sphere à partir d'un centre et d'un nombre de theta
+	generate_sphere(sphere_center1,100);
 	
-	//fonction pour generer une sphere à partir d'un centre et
-	//d'un nombre de theta
-	generate_sphere(sphere_center1,140);
-	
-	
+	//calcul du rayon de la spere
+	r=Math.sqrt(Math.pow((vertices[0]-sphere_center1.x),2)+vertices[1]-sphere_center1.x+vertices[2]-sphere_center1.x);
+
 	//creation des buffers et envoit des tableaux dans les buffers
 	//+definition de la taille et du nombre d'item contenu dans les tableaux.
 	vertexBuffer = gl.createBuffer();
@@ -230,32 +186,12 @@ function initBuffers() {
 	normalBuffer.itemSize = 3;
 	normalBuffer.numItems = vertexNormales.length/3;
 
-	//envoit des petites normales au buffer qu'on pourra voir s'afficher
-	vertexBuffer2 = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer2);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(petitesNormales), gl.STATIC_DRAW);
-	vertexBuffer2.itemSize = 3;
-	vertexBuffer2.numItems = petitesNormales.length/3;
-
-	//envoit des couleurs au buffer
+    //envoit des couleurs au buffer
 	colorBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 	colorBuffer.itemSize = 4;
 	colorBuffer.numItems = colors.length/4;
-
-
-	//envoit des couleurs au buffer
-	planBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, planBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexPlan), gl.STATIC_DRAW);
-	planBuffer.itemSize = 3;
-	planBuffer.numItems = 6;
-
-
-	
-
-	
 }
 
 
@@ -321,22 +257,22 @@ function initShaders(vShaderTxt,fShaderTxt) {
 	gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
 	shaderProgram.vertexNormaleAttribute = gl.getAttribLocation(shaderProgram, "a_normal");
 	gl.enableVertexAttribArray(shaderProgram.vertexNormaleAttribute);
-	shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
-	shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
-
-	shaderProgram.pMatrixUniform2 = gl.getUniformLocation(shaderProgram, "uPMatrix2");
-	shaderProgram.mvMatrixUniform2 = gl.getUniformLocation(shaderProgram, "uMVMatrix2");
-	
-	shaderProgram.DirectionLumiere   = gl.getUniformLocation(shaderProgram, "DirectionLumiere"); 
-	
-	shaderProgram.uMaterialAmbient   = gl.getUniformLocation(shaderProgram, "uMaterialAmbient"); 
-    shaderProgram.uMaterialDiffuse   = gl.getUniformLocation(shaderProgram, "uMaterialDiffuse");
-    shaderProgram.uMaterialSpecular  = gl.getUniformLocation(shaderProgram, "uMaterialSpecular");
-   	shaderProgram.uLightAmbient      = gl.getUniformLocation(shaderProgram, "uLightAmbient");
-    shaderProgram.uLightDiffuse      = gl.getUniformLocation(shaderProgram, "uLightDiffuse");
-    shaderProgram.uLightSpecular     = gl.getUniformLocation(shaderProgram, "uLightSpecular");
-	shaderProgram.uShininess         = gl.getUniformLocation(shaderProgram, "uShininess");
-    
+	shaderProgram.pMatrixUniform 	= gl.getUniformLocation(shaderProgram, "uPMatrix");
+	shaderProgram.mvMatrixUniform 	= gl.getUniformLocation(shaderProgram, "uMVMatrix");
+	shaderProgram.pMatrixUniform2	= gl.getUniformLocation(shaderProgram, "uPMatrix2");
+	shaderProgram.mvMatrixUniform2 	= gl.getUniformLocation(shaderProgram, "uMVMatrix2");
+	shaderProgram.DirectionLumiere  = gl.getUniformLocation(shaderProgram, "DirectionLumiere"); 
+	shaderProgram.uMaterialAmbient  = gl.getUniformLocation(shaderProgram, "uMaterialAmbient"); 
+    shaderProgram.uMaterialDiffuse  = gl.getUniformLocation(shaderProgram, "uMaterialDiffuse");
+    shaderProgram.uMaterialSpecular = gl.getUniformLocation(shaderProgram, "uMaterialSpecular");
+   	shaderProgram.uLightAmbient     = gl.getUniformLocation(shaderProgram, "uLightAmbient");
+    shaderProgram.uLightDiffuse     = gl.getUniformLocation(shaderProgram, "uLightDiffuse");
+    shaderProgram.uLightSpecular    = gl.getUniformLocation(shaderProgram, "uLightSpecular");
+	shaderProgram.brillance         = gl.getUniformLocation(shaderProgram, "brillance");
+	shaderProgram.Kd       			= gl.getUniformLocation(shaderProgram, "Kd");
+	shaderProgram.Ks       			= gl.getUniformLocation(shaderProgram, "Ks");
+	shaderProgram.pi      			= gl.getUniformLocation(shaderProgram, "pi");
+	shaderProgram.r       			= gl.getUniformLocation(shaderProgram, "r");
 }
 
 
@@ -346,28 +282,27 @@ function setMatrixUniforms() {
 	if(shaderProgram != null) {
 		gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
 		gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
-		gl.uniformMatrix4fv(shaderProgram.worldmatrix, false, worldmatrix);
-
 		gl.uniformMatrix4fv(shaderProgram.pMatrixUniform2, false, pMatrix2);
 		gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform2, false, mvMatrix2);
-		
-		
 		gl.uniform3f(shaderProgram.DirectionLumiere,   2.0, 2.0, 2.0);
-		
-		gl.uniform4fv(shaderProgram.uLightAmbient, [0.005,0.005,0.005,1.0]);
+		gl.uniform4fv(shaderProgram.uLightAmbient, [0.05,0.05,0.05,1.0]);
     	gl.uniform4fv(shaderProgram.uLightDiffuse,  [1.0,1.0,1.0,1.0]); 
     	gl.uniform4fv(shaderProgram.uLightSpecular,  [1.0,1.0,1.0,1.0]);
     	gl.uniform4fv(shaderProgram.uMaterialAmbient, [1.0,1.0,1.0,1.0]); 
     	gl.uniform4fv(shaderProgram.uMaterialDiffuse, [1.0,1.0,1.0,1.0]);
     	gl.uniform4fv(shaderProgram.uMaterialSpecular,[1.0,1.0,1.0,1.0]);
-    	gl.uniform1f(shaderProgram.uShininess, 75.0);
+    	gl.uniform1f(shaderProgram.Kd, 0.10);
+    	gl.uniform1f(shaderProgram.Ks, 0.10);
+		gl.uniform1f(shaderProgram.brillance, 50.0);
+		gl.uniform1f(shaderProgram.pi, Math.PI);
+		gl.uniform1f(shaderProgram.r, r);
 		
 	}
 }
 
 // =====================================================
 function drawScene() {
-	var z_camera=-5.0;
+	var z_camera=-4.0;
 	gl.clear(gl.COLOR_BUFFER_BIT);
 
 	if(shaderProgram != null) {
@@ -392,8 +327,6 @@ function drawScene() {
 		mat4.identity(mvMatrix);
 		mat4.translate(mvMatrix, [0.0, 0.0, z_camera]);
 		mat4.multiply(mvMatrix, objMatrix);
-		worldmatrix=mat4.multiply(mvMatrix, objMatrix);
-
 		
 		mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix2);
 		mat4.identity(mvMatrix2);
@@ -407,22 +340,7 @@ function drawScene() {
 
 
 
-		//Envoit des normales au shader, important pour les jeux de lumières
-		gl.bindBuffer(gl.ARRAY_BUFFER, planBuffer);
-		gl.vertexAttribPointer(
-   		shaderProgram.aVertexPosition, 3, gl.FLOAT, false, 0, 0);
-
-		mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
-		mat4.identity(mvMatrix);
-		mat4.translate(mvMatrix, [0.0, 0.0, z_camera]);
 		
-		
-
-		setMatrixUniforms();
-
-		//dessine en prenant compte des triangles de la sphere
-		gl.drawArrays(gl.LINES, 0,  planBuffer.numItems);
-
 
 
 

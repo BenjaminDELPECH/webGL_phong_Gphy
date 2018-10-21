@@ -7,23 +7,16 @@ varying vec4 vColor;
 varying vec3 vNormal;
 varying vec3 vCamera;
 
-
-
-
 uniform mat4 uMVMatrix;
 uniform mat4 uPMatrix;
 uniform mat4 u_matrix;
-
 
 uniform mat4 uMVMatrix2;
 uniform mat4 uPMatrix2;
 
 
-
 void main(void) {
-    
-    
-	gl_Position = uPMatrix2 * uMVMatrix2 * vec4(aVertexPosition, 1.0);
+    gl_Position = uPMatrix2 * uMVMatrix2 * vec4(aVertexPosition, 1.0);
 	vec4 vertex =  uPMatrix  * vec4(0.0,0.0,0.0, 1.0);
 	
 	//VECTEUR camera
@@ -34,7 +27,4 @@ void main(void) {
 	
 	vColor=aVertexColor;
     vNormal = a_normal;
-    	
-
-
-}
+ }

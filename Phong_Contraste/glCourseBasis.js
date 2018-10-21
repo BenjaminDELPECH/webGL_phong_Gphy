@@ -10,12 +10,9 @@ var normalBuffer;
 var mvMatrix = mat4.create();
 var pMatrix = mat4.create();
 var objMatrix = mat4.create();
+var mvMatrix2 = mat4.create();
+var pMatrix2 = mat4.create();
 mat4.identity(objMatrix);
-
-var r= 0.23;
-
-
-
 
 
 // =====================================================
@@ -35,8 +32,8 @@ function webGLStart() {
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	gl.enable(gl.DEPTH_TEST);
 
-//	drawScene();
-tick();
+	//	drawScene();
+	tick();
 }
 
 // =====================================================
@@ -56,8 +53,8 @@ function initGL(canvas)
 function generate_contraste(vertices){
 	for(i=0;i<vertices.length;i++){
 	test=Math.random();
-	if(test<0.05){
-		vertices[i]+=0.35;
+	if(test<0.5){
+		vertices[i]+=Math.random()/5;
 
 		}
 	}
@@ -65,27 +62,37 @@ function generate_contraste(vertices){
 }
 
 // =====================================================
-function generate_sphere(sphere_center,couleur,nbTh){
-	couleur2=0.0;
+function generate_sphere(sphere_center,nbTh){
+	couleur1=1.0;
+	
+	//definition des coordonnées du centre de la sphere à partir du parametre sphere_center
 	xSph_cent=sphere_center.x;
 	ySph_cent=sphere_center.y;
 	zSph_cent=sphere_center.z;
-
+	
+	//nombre de Theta, définit le nombre de triangle verticaux
 	nbTh=nbTh;
+
+	//nombre de Phi, définit le nombre de triangle latéraux.
 	nbPh=nbTh*2;
 
+	//permet de faire un tour de cercle
 	deltaTh=Math.PI/nbTh;
 	deltaPh=(2*Math.PI)/nbPh;
 	
+	//Parcours vertical de notre sphere 
 	for(i=0;i<nbTh;i++){
 		Th1=i*deltaTh;
 		Th2=(i+1)*deltaTh;
 		
+		//Parcours latéral de notre sphere
 		for(j=0;j<nbPh;j++){
-
 			Ph1=j*deltaPh;
 			Ph2=(j+1)*deltaPh;
 
+			//definition de nos 4 points formant 2 triangles.
+			//1er triangle->P1,P3,P4
+			//2eme triangle->P1,P4,P2
 			x1=Math.sin(Th1)*Math.cos(Ph1)+xSph_cent;
 			y1=Math.cos(Th1)+ySph_cent;
 			z1=Math.sin(Th1)*Math.sin(Ph1)+zSph_cent;
@@ -102,153 +109,83 @@ function generate_sphere(sphere_center,couleur,nbTh){
 			y4=Math.cos(Th2)+ySph_cent;
 			z4=Math.sin(Th2)*Math.sin(Ph2)+zSph_cent;
 
-			couleur=1.0;
-
-
+			
 			if(i < nbTh-1) {
+				//Coordonnées des points à la suface de la sphère
 				vertices.push(x1,y1,z1);
 				vertices.push(x3,y3,z3);
 				vertices.push(x4,y4,z4);
 				
-			
-				xG=(x1+x3+x4)/3;
-				yG=(y1+y3+y4)/3;
-				zG=(z1+z3+z4)/3;
-				//coordonnees milieu triangle
-				petitesNormales.push(xG,yG,zG);
-				petitesNormales.push((xG-xSph_cent)*1.01,(yG-ySph_cent)*1.01,(zG-zSph_cent)*1.01);
-
-
-
-			
-
-				vec_X1=x1-xSph_cent;
-
-
-				vertexNormales.push(vec_X1,y1-ySph_cent,z1-zSph_cent);
+				//Point sur la surface de la spere-centre de la sphere
+				vertexNormales.push(x1-xSph_cent,y1-ySph_cent,z1-zSph_cent);
 				vertexNormales.push(x3-xSph_cent,y3-ySph_cent,z3-zSph_cent);
 				vertexNormales.push(x4-xSph_cent,y4-ySph_cent,z4-zSph_cent);
 
-				couleur_vec_X1=(vec_X1+1)/2;
-
-				colors.push(couleur_vec_X1,couleur2,couleur,1.0);
-				colors.push(couleur_vec_X1,couleur2,couleur,1.0);
-				colors.push(couleur_vec_X1,couleur2,couleur,1.0);
-
-				
+				//couleurs
+				colors.push((x1-xSph_cent+1)/2,(y1-ySph_cent+1)/2,(z1-ySph_cent+1)/2,1.0);
+				colors.push((x3-xSph_cent+1)/2,(y3-ySph_cent+1)/2,(z3-ySph_cent+1)/2,1.0);
+				colors.push((x4-xSph_cent+1)/2,(y4-ySph_cent+1)/2,(z4-ySph_cent+1)/2,1.0);
 			}
-
 			if(i != 0) {
+				//Coordonnées des points à la suface de la sphère
 				vertices.push(x1,y1,z1);
 				vertices.push(x4,y4,z4);
 				vertices.push(x2,y2,z2);
 
-				xG=(x1+x4+x2)/3;
-				yG=(y1+y4+y2)/3;
-				zG=(z2+z4+z2)/3;
-				//coordonnees milieu triangle
-				// petitesNormales.push(xG,yG,zG);
-				// petitesNormales.push((xG-xSph_cent)*1.01,(yG-ySph_cent)*1.02,(zG-zSph_cent)*1.02);
-				
-				
-			
-				
-
-
-				
-
-				vec_X1=x1-xSph_cent;
-
+				//Normales
 				vertexNormales.push(x1-xSph_cent,y1-ySph_cent,z1-zSph_cent);
 				vertexNormales.push(x4-xSph_cent,y4-ySph_cent,z4-zSph_cent);
 				vertexNormales.push(x2-xSph_cent,y2-ySph_cent,z2-zSph_cent);
 
-				couleur_vec_X1=(vec_X1+1)/2;
-
-				colors.push(couleur_vec_X1,couleur2,couleur,1.0);
-				colors.push(couleur_vec_X1,couleur2,couleur,1.0);
-				colors.push(couleur_vec_X1,couleur2,couleur,1.0);
-
-
+				//couleurs
+				colors.push((x1-xSph_cent+1)/2,(y1-ySph_cent+1)/2,(z1-ySph_cent+1)/2,1.0);
+				colors.push((x4-xSph_cent+1)/2,(y4-ySph_cent+1)/2,(z4-ySph_cent+1)/2,1.0);
+				colors.push((x2-xSph_cent+1)/2,(y2-ySph_cent+1)/2,(z2-ySph_cent+1)/2,1.0);
 			}
 
 		}
 	}
-
-
 }
+
 // =====================================================
 function initBuffers() {
-	
+	//declaration des tableaux
 	vertices = [];
-	vertices_plan=[0,0,0,
-	5,5,5];
 	colors=[];
 	vertexNormales=[];
 	petitesNormales=[];
-	
-	var compteur1=0;
+
 	//coordonnées du centre de la sphère
-	
 	sphere_center1={x:0.0,y:0.0,z:0.0};
-	sphere_center2={x:2.0,y:0.0,z:0.0};
-	sphere_center3={x:4.0,y:0.0,z:0.0};
-	sphere_center4={x:6.0,y:0.0,z:0.0};
-	sphere_center5={x:8.0,y:0.0,z:0.0};
 
-	// sphere_center2={x:-5.0,y:5.0,z:-2.0};
-	// sphere_center3={x:-5.0,y:-5.0,z:-2.0};
-	// sphere_center4={x:5.0,y:-5.0,z:-2.0};
-	
-
-	generate_sphere(sphere_center1,1.0,100);
-	generate_sphere(sphere_center2,1.0,100);
-	generate_sphere(sphere_center3,1.0,100);
-	generate_sphere(sphere_center4,1.0,100);
-	generate_sphere(sphere_center5,1.0,100);
-	
+	//fonction pour generer une sphere à partir d'un centre et d'un nombre de theta
+	generate_sphere(sphere_center1,100);
 	generate_contraste(vertices);
-	// generate_sphere(sphere_center2,1.0,50);
-	// generate_sphere(sphere_center3,1.0,50);
-	// generate_sphere(sphere_center4,1.0,50);
+	
+	//calcul du rayon de la spere
+	r=Math.sqrt(Math.pow((vertices[0]-sphere_center1.x),2)+vertices[1]-sphere_center1.x+vertices[2]-sphere_center1.x);
 
-
-
+	//creation des buffers et envoit des tableaux dans les buffers
+	//+definition de la taille et du nombre d'item contenu dans les tableaux.
 	vertexBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 	vertexBuffer.itemSize = 3;
 	vertexBuffer.numItems = vertices.length/3;
 
-	vertexBuffer2 = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer2);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(petitesNormales), gl.STATIC_DRAW);
-	vertexBuffer2.itemSize = 3;
-	vertexBuffer2.numItems = petitesNormales.length/3;
+	//envoit des normales au buffer
+	normalBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormales), gl.STATIC_DRAW);
+	normalBuffer.itemSize = 3;
+	normalBuffer.numItems = vertexNormales.length/3;
 
-
-
+    //envoit des couleurs au buffer
 	colorBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 	colorBuffer.itemSize = 4;
 	colorBuffer.numItems = colors.length/4;
-
-
-	normalBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormales), gl.STATIC_DRAW);
-	normalBuffer.itemSize = 3;
-	colorBuffer.numItems = vertexNormales.length/3;
-
-	planBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, planBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices_plan), gl.STATIC_DRAW);
-	planBuffer.itemSize = 3;
-	planBuffer.numItems = vertices_plan.length/3;
-
-
-
 }
 
 
@@ -307,137 +244,106 @@ function initShaders(vShaderTxt,fShaderTxt) {
 	gl.useProgram(shaderProgram);
 
 
-	
+	//liaison faites avec le shader
 	shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
 	gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
-
-	
 	shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "aVertexColor");
 	gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
-	
-
 	shaderProgram.vertexNormaleAttribute = gl.getAttribLocation(shaderProgram, "a_normal");
 	gl.enableVertexAttribArray(shaderProgram.vertexNormaleAttribute);
-
-
-	shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
-	shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
-	// shaderProgram.colorLocation = gl.getUniformLocation(shaderProgram, "u_color");
-	shaderProgram.reverseLightDirectionLocation =gl.getUniformLocation(shaderProgram, "SourceLumineuse");
-
-	
-	
-	shaderProgram.uMaterialAmbient   = gl.getUniformLocation(shaderProgram, "uMaterialAmbient"); 
-    shaderProgram.uMaterialDiffuse   = gl.getUniformLocation(shaderProgram, "uMaterialDiffuse");
-    shaderProgram.uMaterialSpecular  = gl.getUniformLocation(shaderProgram, "uMaterialSpecular");
-   
-   	shaderProgram.uLightAmbient      = gl.getUniformLocation(shaderProgram, "uLightAmbient");
-    shaderProgram.uLightDiffuse      = gl.getUniformLocation(shaderProgram, "uLightDiffuse");
-    shaderProgram.uLightSpecular     = gl.getUniformLocation(shaderProgram, "uLightSpecular");
-
-     shaderProgram.uShininess          = gl.getUniformLocation(shaderProgram, "uShininess");
-    
+	shaderProgram.pMatrixUniform 	= gl.getUniformLocation(shaderProgram, "uPMatrix");
+	shaderProgram.mvMatrixUniform 	= gl.getUniformLocation(shaderProgram, "uMVMatrix");
+	shaderProgram.pMatrixUniform2	= gl.getUniformLocation(shaderProgram, "uPMatrix2");
+	shaderProgram.mvMatrixUniform2 	= gl.getUniformLocation(shaderProgram, "uMVMatrix2");
+	shaderProgram.DirectionLumiere  = gl.getUniformLocation(shaderProgram, "DirectionLumiere"); 
+	shaderProgram.uMaterialAmbient  = gl.getUniformLocation(shaderProgram, "uMaterialAmbient"); 
+    shaderProgram.uMaterialDiffuse  = gl.getUniformLocation(shaderProgram, "uMaterialDiffuse");
+    shaderProgram.uMaterialSpecular = gl.getUniformLocation(shaderProgram, "uMaterialSpecular");
+   	shaderProgram.uLightAmbient     = gl.getUniformLocation(shaderProgram, "uLightAmbient");
+    shaderProgram.uLightDiffuse     = gl.getUniformLocation(shaderProgram, "uLightDiffuse");
+    shaderProgram.uLightSpecular    = gl.getUniformLocation(shaderProgram, "uLightSpecular");
+	shaderProgram.brillance         = gl.getUniformLocation(shaderProgram, "brillance");
+	shaderProgram.Kd       			= gl.getUniformLocation(shaderProgram, "Kd");
+	shaderProgram.Ks       			= gl.getUniformLocation(shaderProgram, "Ks");
+	shaderProgram.pi      			= gl.getUniformLocation(shaderProgram, "pi");
+	shaderProgram.r       			= gl.getUniformLocation(shaderProgram, "r");
 }
 
 
 // =====================================================
 function setMatrixUniforms() {
+	
 	if(shaderProgram != null) {
 		gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
 		gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
-
-		// gl.uniform4fv(shaderProgram.colorLocation, [0.2, 1, 0.2, 1]); // green
-		gl.uniform3fv(shaderProgram.reverseLightDirectionLocation, [2.0, 2.0, 3.0]);
-		
-		
-    	gl.uniform4fv(shaderProgram.uLightAmbient, [0.015,0.015,0.015,1.0]);
+		gl.uniformMatrix4fv(shaderProgram.pMatrixUniform2, false, pMatrix2);
+		gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform2, false, mvMatrix2);
+		gl.uniform3f(shaderProgram.DirectionLumiere,   2.0, 2.0, 2.0);
+		gl.uniform4fv(shaderProgram.uLightAmbient, [0.05,0.05,0.05,1.0]);
     	gl.uniform4fv(shaderProgram.uLightDiffuse,  [1.0,1.0,1.0,1.0]); 
     	gl.uniform4fv(shaderProgram.uLightSpecular,  [1.0,1.0,1.0,1.0]);
-    	
     	gl.uniform4fv(shaderProgram.uMaterialAmbient, [1.0,1.0,1.0,1.0]); 
     	gl.uniform4fv(shaderProgram.uMaterialDiffuse, [1.0,1.0,1.0,1.0]);
     	gl.uniform4fv(shaderProgram.uMaterialSpecular,[1.0,1.0,1.0,1.0]);
-    	
-    	gl.uniform1f(shaderProgram.uShininess, 20.0);
+    	gl.uniform1f(shaderProgram.Kd, 0.10);
+    	gl.uniform1f(shaderProgram.Ks, 0.10);
+		gl.uniform1f(shaderProgram.brillance, 50.0);
+		gl.uniform1f(shaderProgram.pi, Math.PI);
+		gl.uniform1f(shaderProgram.r, r);
 		
-		
-
 	}
 }
 
 // =====================================================
 function drawScene() {
+	var z_camera=-4.0;
 	gl.clear(gl.COLOR_BUFFER_BIT);
 
 	if(shaderProgram != null) {
+		//Envoit des triangle au shader
 		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 		gl.vertexAttribPointer(
 		shaderProgram.vertexPositionAttribute,
 		vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-	
-		
-
+		//envoit des couleurs au shader
 		gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
 		gl.vertexAttribPointer(
 		shaderProgram.vertexColorAttribute,
 		colorBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-
+		//Envoit des normales au shader, important pour les jeux de lumières
 		gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
 		gl.vertexAttribPointer(
-   		 shaderProgram.vertexNormaleAttribute, 3, gl.FLOAT, false, 0, 0);
-
+   		shaderProgram.vertexNormaleAttribute, 3, gl.FLOAT, false, 0, 0);
 
 		mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
 		mat4.identity(mvMatrix);
-		mat4.translate(mvMatrix, [0.0, 0.0, -19.0]);
+		mat4.translate(mvMatrix, [0.0, 0.0, z_camera]);
 		mat4.multiply(mvMatrix, objMatrix);
+		
+		mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix2);
+		mat4.identity(mvMatrix2);
+		mat4.translate(mvMatrix2, [0.0, 0.0, z_camera]);
 
 		setMatrixUniforms();
 
-
+		//dessine en prenant compte des triangles de la sphere
 		gl.drawArrays(gl.TRIANGLES, 0, vertexBuffer.numItems);
-
-
-
-
-		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer2);
-		gl.vertexAttribPointer(
-		shaderProgram.vertexPositionAttribute,
-		vertexBuffer2.itemSize, gl.FLOAT, false, 0, 0);
-
-
-		mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
-		mat4.identity(mvMatrix);
-		mat4.translate(mvMatrix, [0.0, 0.0, -5.0]);
-		mat4.multiply(mvMatrix, objMatrix);
-
-		setMatrixUniforms();
-
-		// gl.drawArrays(gl.LINES, 0, vertexBuffer2.numItems);
 
 
 
 
 		
 
-		gl.bindBuffer(gl.ARRAY_BUFFER, planBuffer);
-		gl.vertexAttribPointer(
-		shaderProgram.vertexPositionAttribute,
-		planBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
 
-		mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
-		mat4.identity(mvMatrix);
-		mat4.translate(mvMatrix, [0.0, 0.0, -5.0]);
-		mat4.multiply(mvMatrix, objMatrix);
 
-		setMatrixUniforms();
-
-		gl.drawArrays(gl.LINES, 0, planBuffer.numItems);
+	
 
 
+	
+	
 
 
 	}
